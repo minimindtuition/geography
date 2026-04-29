@@ -1,1 +1,553 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layers of the Atmosphere — Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --space: #050a1a;
+    --deep: #0a1628;
+    --card: #0d1f3c;
+    --border: #1a3a6e;
+    --accent: #00d4ff;
+    --gold: #ffd166;
+    --green: #06d6a0;
+    --red: #ef476f;
+    --text: #c8dff5;
+    --muted: #5a7fa8;
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–space);
+color: var(–text);
+font-family: ‘Exo 2’, sans-serif;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* Starfield */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+radial-gradient(1px 1px at 10% 20%, #fff 0%, transparent 100%),
+radial-gradient(1px 1px at 30% 50%, #adf 0%, transparent 100%),
+radial-gradient(1px 1px at 60% 10%, #fff 0%, transparent 100%),
+radial-gradient(1px 1px at 80% 70%, #adf 0%, transparent 100%),
+radial-gradient(1px 1px at 50% 85%, #fff 0%, transparent 100%),
+radial-gradient(1px 1px at 90% 35%, #adf 0%, transparent 100%),
+radial-gradient(1px 1px at 15% 75%, #fff 0%, transparent 100%),
+radial-gradient(1px 1px at 70% 55%, #adf 0%, transparent 100%),
+radial-gradient(1px 1px at 45% 30%, #fff 0%, transparent 100%),
+radial-gradient(1px 1px at 25% 90%, #adf 0%, transparent 100%);
+pointer-events: none;
+z-index: 0;
+}
+
+.container {
+max-width: 720px;
+margin: 0 auto;
+padding: 40px 20px 60px;
+position: relative;
+z-index: 1;
+}
+
+header {
+text-align: center;
+margin-bottom: 48px;
+}
+
+header .label {
+font-family: ‘Orbitron’, monospace;
+font-size: 11px;
+letter-spacing: 6px;
+color: var(–accent);
+text-transform: uppercase;
+margin-bottom: 12px;
+opacity: 0.8;
+}
+
+header h1 {
+font-family: ‘Orbitron’, monospace;
+font-size: clamp(22px, 5vw, 36px);
+font-weight: 900;
+color: #fff;
+line-height: 1.2;
+text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+}
+
+header h1 span { color: var(–accent); }
+
+header p {
+margin-top: 14px;
+font-size: 14px;
+color: var(–muted);
+letter-spacing: 0.5px;
+}
+
+/* Progress */
+.progress-bar {
+background: var(–deep);
+border: 1px solid var(–border);
+border-radius: 100px;
+height: 6px;
+margin-bottom: 36px;
+overflow: hidden;
+}
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–accent), #00ffaa);
+border-radius: 100px;
+transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+width: 0%;
+}
+
+/* Question card */
+.question-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 16px;
+padding: 28px;
+margin-bottom: 16px;
+animation: fadeSlide 0.4s ease both;
+display: none;
+}
+.question-card.active { display: block; }
+
+@keyframes fadeSlide {
+from { opacity: 0; transform: translateY(16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+.q-number {
+font-family: ‘Orbitron’, monospace;
+font-size: 11px;
+letter-spacing: 4px;
+color: var(–accent);
+margin-bottom: 12px;
+}
+
+.q-text {
+font-size: 17px;
+font-weight: 600;
+color: #e8f4ff;
+line-height: 1.55;
+margin-bottom: 22px;
+}
+
+/* Options */
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option {
+background: var(–deep);
+border: 1.5px solid var(–border);
+border-radius: 10px;
+padding: 13px 18px;
+cursor: pointer;
+font-size: 14px;
+font-family: ‘Exo 2’, sans-serif;
+color: var(–text);
+text-align: left;
+transition: all 0.2s ease;
+display: flex;
+align-items: center;
+gap: 12px;
+position: relative;
+overflow: hidden;
+}
+
+.option::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: linear-gradient(90deg, transparent, rgba(0,212,255,0.04));
+opacity: 0;
+transition: opacity 0.2s;
+}
+
+.option:hover:not(:disabled)::before { opacity: 1; }
+.option:hover:not(:disabled) {
+border-color: var(–accent);
+color: #fff;
+transform: translateX(4px);
+}
+
+.option .bullet {
+width: 26px;
+height: 26px;
+border-radius: 50%;
+border: 1.5px solid var(–border);
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘Orbitron’, monospace;
+font-size: 10px;
+flex-shrink: 0;
+transition: all 0.2s;
+color: var(–muted);
+}
+
+.option:hover:not(:disabled) .bullet {
+border-color: var(–accent);
+color: var(–accent);
+}
+
+.option.correct {
+border-color: var(–green);
+background: rgba(6, 214, 160, 0.08);
+color: #fff;
+}
+.option.correct .bullet {
+background: var(–green);
+border-color: var(–green);
+color: #000;
+}
+
+.option.wrong {
+border-color: var(–red);
+background: rgba(239, 71, 111, 0.08);
+color: #fff;
+}
+.option.wrong .bullet {
+background: var(–red);
+border-color: var(–red);
+color: #fff;
+}
+
+.option:disabled { cursor: default; }
+
+/* Feedback */
+.feedback {
+margin-top: 16px;
+padding: 12px 16px;
+border-radius: 8px;
+font-size: 13px;
+font-weight: 600;
+display: none;
+align-items: center;
+gap: 10px;
+letter-spacing: 0.3px;
+}
+.feedback.show { display: flex; animation: fadeSlide 0.3s ease; }
+.feedback.correct-fb { background: rgba(6,214,160,0.12); border: 1px solid rgba(6,214,160,0.3); color: var(–green); }
+.feedback.wrong-fb  { background: rgba(239,71,111,0.12); border: 1px solid rgba(239,71,111,0.3); color: #ff6b8a; }
+
+/* Navigation */
+.nav {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 28px;
+}
+
+.btn {
+font-family: ‘Orbitron’, monospace;
+font-size: 12px;
+letter-spacing: 2px;
+padding: 12px 28px;
+border-radius: 8px;
+border: none;
+cursor: pointer;
+transition: all 0.2s ease;
+text-transform: uppercase;
+}
+
+.btn-next {
+background: linear-gradient(135deg, var(–accent), #0094b3);
+color: #000;
+font-weight: 700;
+box-shadow: 0 4px 20px rgba(0,212,255,0.25);
+}
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(0,212,255,0.4); }
+.btn-next:disabled { opacity: 0.3; cursor: default; transform: none; box-shadow: none; }
+
+.score-chip {
+font-family: ‘Orbitron’, monospace;
+font-size: 11px;
+letter-spacing: 2px;
+color: var(–gold);
+background: rgba(255,209,102,0.08);
+border: 1px solid rgba(255,209,102,0.2);
+padding: 6px 14px;
+border-radius: 100px;
+}
+
+/* Results */
+#results {
+display: none;
+text-align: center;
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 16px;
+padding: 48px 32px;
+animation: fadeSlide 0.5s ease;
+}
+
+.result-icon {
+font-size: 56px;
+margin-bottom: 20px;
+display: block;
+}
+
+.result-score {
+font-family: ‘Orbitron’, monospace;
+font-size: 56px;
+font-weight: 900;
+color: var(–accent);
+text-shadow: 0 0 40px rgba(0,212,255,0.6);
+line-height: 1;
+}
+
+.result-label {
+font-size: 13px;
+color: var(–muted);
+letter-spacing: 4px;
+text-transform: uppercase;
+margin-top: 8px;
+font-family: ‘Orbitron’, monospace;
+}
+
+.result-msg {
+margin-top: 24px;
+font-size: 16px;
+color: var(–text);
+line-height: 1.6;
+}
+
+.btn-retry {
+margin-top: 32px;
+background: transparent;
+border: 1.5px solid var(–accent);
+color: var(–accent);
+padding: 13px 36px;
+font-family: ‘Orbitron’, monospace;
+font-size: 12px;
+letter-spacing: 3px;
+border-radius: 8px;
+cursor: pointer;
+transition: all 0.25s;
+text-transform: uppercase;
+}
+.btn-retry:hover { background: var(–accent); color: #000; box-shadow: 0 0 24px rgba(0,212,255,0.4); }
+</style>
+
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="label">Science Quiz</div>
+    <h1>Layers of the <span>Atmosphere</span></h1>
+    <p>10 questions · Choose the best answer for each</p>
+  </header>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div id="quiz"></div>
+
+  <div id="results">
+    <span class="result-icon" id="resultIcon"></span>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-label">out of 10</div>
+    <p class="result-msg" id="resultMsg"></p>
+    <button class="btn-retry" onclick="restart()">↺ &nbsp;Try Again</button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Which layer of the atmosphere is the closest and lowest to Earth's surface?",
+    opts: ["Stratosphere", "Mesosphere", "Troposphere", "Thermosphere"],
+    ans: 2
+  },
+  {
+    q: "The thermosphere is known as the 'hottest layer'. What is its approximate temperature range?",
+    opts: ["−5°C to 17°C", "−5°C to −15°C", "120°C to 2000°C", "3,150°F"],
+    ans: 2
+  },
+  {
+    q: "Meteors from space burn up in which layer of the atmosphere?",
+    opts: ["Exosphere", "Stratosphere", "Troposphere", "Mesosphere"],
+    ans: 3
+  },
+  {
+    q: "The ozone layer, which blocks ultraviolet rays, is found in which atmospheric layer?",
+    opts: ["Troposphere", "Stratosphere", "Mesosphere", "Exosphere"],
+    ans: 1
+  },
+  {
+    q: "Which is the uppermost layer of the atmosphere, extending up to 10,000 km?",
+    opts: ["Thermosphere", "Mesosphere", "Exosphere", "Stratosphere"],
+    ans: 2
+  },
+  {
+    q: "The Mesosphere is correctly described as which of the following?",
+    opts: [
+      "The hottest layer of the atmosphere",
+      "The coldest layer of the atmosphere",
+      "The layer closest to Earth",
+      "The layer where aeroplanes fly"
+    ],
+    ans: 1
+  },
+  {
+    q: "Which gases are found in the lightest quantities in the thermosphere?",
+    opts: [
+      "CO₂, N₂, and O₂",
+      "Water vapour and greenhouse gases",
+      "O₂, helium, and hydrogen",
+      "Ozone and nitrogen"
+    ],
+    ans: 2
+  },
+  {
+    q: "Aeroplanes typically fly in which layer of the atmosphere?",
+    opts: ["Troposphere", "Mesosphere", "Stratosphere", "Exosphere"],
+    ans: 2
+  },
+  {
+    q: "Which atmospheric layer helps in radio wave transmission?",
+    opts: ["Troposphere", "Stratosphere", "Mesosphere", "Thermosphere"],
+    ans: 3
+  },
+  {
+    q: "The Troposphere contains water vapours, CO₂, N₂, O₂ and greenhouse gases. What is its average height?",
+    opts: ["50 km", "80 km", "11 km", "600 km"],
+    ans: 2
+  }
+];
+
+let current = 0, score = 0, answered = false;
+
+function buildQuestion(index) {
+  const q = questions[index];
+  const card = document.createElement('div');
+  card.className = 'question-card active';
+  card.id = 'card-' + index;
+
+  const letters = ['A','B','C','D'];
+
+  card.innerHTML = `
+    <div class="q-number">QUESTION ${index + 1} / ${questions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options" id="opts-${index}">
+      ${q.opts.map((o,i) => `
+        <button class="option" onclick="choose(${index},${i})" id="opt-${index}-${i}">
+          <span class="bullet">${letters[i]}</span>
+          <span>${o}</span>
+        </button>
+      `).join('')}
+    </div>
+    <div class="feedback" id="fb-${index}"></div>
+  `;
+  return card;
+}
+
+function choose(qIdx, optIdx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[qIdx];
+  const allBtns = document.querySelectorAll(`#opts-${qIdx} .option`);
+
+  allBtns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    else if (i === optIdx) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById(`fb-${qIdx}`);
+  if (optIdx === q.ans) {
+    score++;
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = '✓ &nbsp;Correct! Well done.';
+  } else {
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `✗ &nbsp;Incorrect. The correct answer is <strong>${q.opts[q.ans]}</strong>.`;
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+  updateScore();
+}
+
+function updateScore() {
+  document.getElementById('scoreChip').textContent = `Score: ${score}`;
+  const pct = ((current + 1) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function nextQuestion() {
+  const oldCard = document.getElementById('card-' + current);
+  if (oldCard) oldCard.remove();
+
+  current++;
+  answered = false;
+  document.getElementById('nextBtn').disabled = true;
+
+  if (current < questions.length) {
+    const quiz = document.getElementById('quiz');
+    quiz.insertBefore(buildQuestion(current), quiz.lastElementChild);
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('progressFill').style.width = '100%';
+
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+
+  document.getElementById('resultScore').textContent = score;
+
+  let icon, msg;
+  if (score === 10) {
+    icon = '🚀'; msg = "Perfect score! You're an atmosphere expert. Ready for the exosphere!";
+  } else if (score >= 7) {
+    icon = '🌟'; msg = `Great job! You got ${score} out of 10 correct. A solid understanding of Earth's atmosphere.`;
+  } else if (score >= 5) {
+    icon = '🌍'; msg = `Not bad! ${score} out of 10. Review the layers and give it another go.`;
+  } else {
+    icon = '☁️'; msg = `You got ${score} out of 10. Study the atmosphere layers and try again!`;
+  }
+
+  document.getElementById('resultIcon').textContent = icon;
+  document.getElementById('resultMsg').textContent = msg;
+}
+
+function restart() {
+  current = 0; score = 0; answered = false;
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('scoreChip').textContent = 'Score: 0';
+  document.getElementById('nextBtn').disabled = true;
+
+  const quiz = document.getElementById('quiz');
+  // Remove old question cards
+  quiz.querySelectorAll('.question-card').forEach(c => c.remove());
+  quiz.insertBefore(buildQuestion(0), quiz.lastElementChild);
+}
+
+// Initial render
+const quiz = document.getElementById('quiz');
+quiz.innerHTML = `
+  <div class="nav">
+    <div class="score-chip" id="scoreChip">Score: 0</div>
+    <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Next →</button>
+  </div>
+`;
+quiz.insertBefore(buildQuestion(0), quiz.lastElementChild);
+</script>
+
+</body>
+</html>
